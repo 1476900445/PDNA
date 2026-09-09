@@ -35,24 +35,6 @@ PDNA_Reproduction/
 | Five joint losses with weights from the paper, Eq.(20) | pdna/setformer/model.py |
 | Thresholds 0.85/0.80, politeness bias 0.05, maximum three corrections | pdna/inspection/corrector.py |
 
-## Data Directory Layout
-```text
-Parent Directory/
-├── LLM_DATA/
-│   ├── train.jsonl
-│   ├── validation.jsonl
-│   ├── test.jsonl
-│   ├── tokenizer/
-│   ├── terminology.json
-│   ├── knowledge_base.json
-│   └── deepseek-14b-negotiation/
-├── NEGMAS_DATA/
-│   ├── offline.jsonl
-│   ├── online.jsonl
-│   ├── scenarios/
-│   └── utility_functions/
-└── PDNA_Reproduction/
-```
 
 # PDNA Paper Model Engineering Reproduction
 PDNA targets bilateral multi-issue natural language negotiation for cloud computing service trading and consists of five modules. The Bayesian feature recognition module infers opponent characteristics and additive product sensitivity via a personality-intention-strategy directed acyclic graph, combining current utterances and historical interactions. The EXPO module adopts hierarchical reinforcement learning to sequentially select self-intentions and negotiation strategies. The FQL module determines configurations, prices and add-on product schemes within the continuous utility space, and generates offers through the inverse utility function. SeTformer integrates domain terminology, opponent features, decision outputs and negotiation history to generate natural language responses. The inspection and correction module finally audits content and politeness, and revises abnormal responses.
