@@ -1,0 +1,138 @@
+seed: 42
+device: auto
+paths:
+  # Required by the user: both paths are relative to this project directory.
+  llm_data: ../LLM_DATA
+  negmas_data: ../NEGMAS_DATA
+  checkpoints: checkpoints
+  logs: logs
+
+labels:
+  personalities: [openness, conscientiousness, extraversion, agreeableness, neuroticism]
+  intents:
+    - Greet
+    - Greet_Ask
+    - Greet_Inform
+    - Greet_Ask_Negotiate_Price_Decrease
+    - Greet_Inform_Negotiate_Price_NoChange
+    - Greet_Inform_Negotiate_Price_Increase
+    - Price/Negotiate_Remove_X
+    - Negotiate_Price_Decrease
+    - Negotiate_Price_NoChange
+    - Negotiate_Price_Increase
+    - Negotiate_Add_X
+    - Product/Negotiate_Remove_X
+    - Negotiate_Remove_delivery
+    - Negotiate_Replace_X_With_Y
+    - Ask_Clarification_Y
+    - Provide_Clarification_Y
+    - tell_price
+    - Ask_Price
+    - Reject
+    - Accept
+    - Acknowledge_acceptance
+    - avoidance_rejection
+    - UNSPECIFIED_IN_PAPER
+  strategies:
+    - active_listening
+    - leverage_information
+    - expanding_the_pie
+    - gradual_concession
+    - large_initial_concession
+    - logrolling
+    - patterned_concession
+    - no_strategy
+    - Firm_Boundary
+    - Empathetic_Ack
+
+bayesian:
+  utterance_vector_dim: 256
+  history_dim: 128
+  lexical_dim: 128
+  hidden_dims: [512, 256]
+  lambda_intent: 0.5
+  lambda_strategy: 0.5
+  cpt_laplace_alpha: 1.0       # implementation parameter; paper does not specify smoothing
+  posterior_eps: 1.0e-8
+  addon_lexical_weight: 0.80
+  addon_intent_weight: 0.10
+  addon_personality_weight: 0.05
+  addon_strategy_weight: 0.05
+
+expo:
+  intent:
+    state_dim: 40
+    action_classes: 23
+    action_encoding_dim: 24
+  strategy:
+    state_dim: 45
+    action_classes: 10
+    action_encoding_dim: 11
+  hidden_dims: [512, 512, 256]
+  total_epochs: 1000
+  online_update_epochs: 100
+  batch_size: 256
+  base_lr: 3.0e-4
+  q_lr: 3.0e-4
+  edit_lr: 1.0e-4
+  bc_pretrain_epochs: 100
+  gamma: 0.99
+  target_tau: 0.005
+  candidate_actions: 2
+  edit_std_min: 0.01          # implementation parameter
+  edit_std_max: 0.35          # implementation parameter
+  replay_capacity: 1000000
+
+fql:
+  state_dim: 7
+  action_dim: 1
+  hidden_dims: [512, 512, 512, 512]
+  q_networks: 2
+  learning_rate: 3.0e-4
+  gradient_steps: 1000000
+  batch_size: 256
+  gamma: 0.99
+  target_tau: 0.005
+  flow_steps: 10
+  ode_solver: euler
+  offline_ratio: 0.8
+  online_ratio: 0.2
+  bc_coefficient: 1.0
+  q_guidance_coefficient: 1.0 # implementation parameter
+  action_min: 0.0
+  action_max: 1.0
+  inverse_utility_tolerance: 0.01
+  replay_capacity: 2000000
+
+setformer:
+  terminology_input_dim: 49
+  terminology_channels: [64, 96, 128]
+  interaction_input_dim: 40
+  history_input_dim: 256
+  encoding_dim: 128
+  reference_points: 64
+  rbf_gamma: 0.0078125        # 1 / encoding_dim; implementation parameter
+  nystrom_landmarks: 32       # implementation parameter
+  sinkhorn_epsilon: 0.1
+  sinkhorn_iterations: 50     # implementation parameter
+  cumulative_importance_threshold: 0.95
+  decoder_layers: 6
+  decoder_heads: 8            # implementation parameter
+  vocabulary_size: 32000      # replace from LLM_DATA metadata
+  max_generation_length: 200
+  temperature: 0.8
+  loss_weights:
+    generation: 0.29
+    goal: 0.15
+    intent: 0.21
+    regularization: 1.0e-5
+    politeness: 0.20
+  training_iterations: 10000
+
+inspection:
+  model_name_or_path: ../LLM_DATA/deepseek-14b-negotiation
+  intent_threshold: 0.85
+  strategy_threshold: 0.80
+  politeness_tolerance: 0.05
+  max_corrections: 3
+  finetune_weights: {intent_strategy: 0.4, politeness: 0.2, terminology: 0.4}
